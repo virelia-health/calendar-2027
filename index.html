@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f2f2f2;
+  font-family: Arial, sans-serif;
+  color: #222;
+}
+
+.app {
+  max-width: 450px;
+  margin: auto;
+  background: white;
+  min-height: 100vh;
+}
+
+/* HEADER */
+
+.header {
+  background: #222;
+  color: white;
+  padding: 18px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 27px;
+}
+
+.header p {
+  margin: 5px 0 0;
+  color: #bbb;
+}
+
+/* MONTH BAR */
+
+.month-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.month-bar button {
+  border: 0;
+  background: #eee;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-size: 23px;
+}
+
+#monthTitle {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* TODAY BUTTON */
+
+.today-button {
+  margin: 10px;
+  padding: 9px 15px;
+  border: 0;
+  border-radius: 20px;
+  background: #222;
+  color: white;
+}
+
+/* WEEKDAYS */
+
+.weekdays,
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.weekdays div {
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  color: #777;
+  padding: 10px 0;
+}
+
+/* DAYS */
+
+.day {
+  min-height: 65px;
+  border: 1px solid #eee;
+  padding: 4px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.day-number {
+  width: 34px;
+  height: 34px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+/* TODAY */
+
+.today .day-number {
+  border: 3px solid red;
+  color: red;
+  font-weight: bold;
+}
+
+/* EVENTS */
+
+.event-dot {
+  font-size: 9px;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.birthday {
+  color: #e91e63;
+}
+
+.meeting {
+  color: #2196f3;
+}
+
+.task {
+  color: #4caf50;
+}
+
+.event {
+  color: #9c27b0;
+}
+
+/* SELECTED DATE */
+
+.selected {
+  background: #f0f0f0;
+}
+
+/* EVENT PANEL */
+
+.event-panel {
+  padding: 15px;
+  border-top: 1px solid #ddd;
+}
+
+.event-panel h2 {
+  margin-top: 0;
+  font-size: 19px;
+}
+
+.event-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f5f5f5;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.event-info strong {
+  display: block;
+}
+
+.event-type {
+  font-size: 12px;
+  color: #777;
+}
+
+.delete {
+  border: 0;
+  background: #ddd;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+
+/* ADD BUTTON */
+
+.add-button {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+
+  width: 58px;
+  height: 58px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #222;
+  color: white;
+
+  font-size: 30px;
+  box-shadow: 0 4px 15px #999;
+}
+
+/* MODAL */
+
+.modal {
+  display: none;
+
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0,0,0,0.55);
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+}
+
+.modal-box {
+  width: 100%;
+  max-width: 400px;
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+}
+
+.modal-box h2 {
+  margin-top: 0;
+}
+
+.modal-box input,
+.modal-box select {
+  width: 100%;
+  padding: 13px;
+  margin: 7px 0;
+  border: 1px solid #ccc;
+  border-radius: 9px;
+  font-size: 15px;
+}
+
+.save {
+  width: 100%;
+  padding: 13px;
+  border: 0;
+  border-radius: 10px;
+  background: #222;
+  color: white;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.cancel {
+  width: 100%;
+  padding: 11px;
+  border: 0;
+  background: #eee;
+  border-radius: 10px;
+  margin-top: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="header">
+    <h1>Calendar 2027</h1>
+    <p>Birthdays, meetings, tasks & events</p>
+  </div>
+
+  <div class="month-bar">
+
+    <button onclick="previousMonth()">‹</button>
+
+    <div id="monthTitle"></div>
+
+    <button onclick="nextMonth()">›</button>
+
+  </div>
+
+  <button class="today-button" onclick="goToday()">
+    Today
+  </button>
+
+  <div class="weekdays">
+    <div>Sun</div>
+    <div>Mon</div>
+    <div>Tue</div>
+    <div>Wed</div>
+    <div>Thu</div>
+    <div>Fri</div>
+    <div>Sat</div>
+  </div>
+
+  <div class="days" id="days"></div>
+
+  <div class="event-panel">
+
+    <h2 id="selectedTitle">
+      January 1, 2027
+    </h2>
+
+    <div id="eventList">
+      No events yet.
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ADD EVENT BUTTON -->
+
+<button class="add-button" onclick="openModal()">+</button>
+
+
+<!-- ADD EVENT MODAL -->
+
+<div class="modal" id="modal">
+
+  <div class="modal-box">
+
+    <h2>Add Reminder</h2>
+
+    <input
+      id="eventName"
+      placeholder="Example: John's Birthday"
+    >
+
+    <input
+      id="eventDate"
+      type="date"
+      value="2027-01-01"
+    >
+
+    <select id="eventType">
+
+      <option value="birthday">
+        🎂 Birthday
+      </option>
+
+      <option value="meeting">
+        📅 Meeting
+      </option>
+
+      <option value="task">
+        📝 Task
+      </option>
+
+      <option value="event">
+        🎉 Event
+      </option>
+
+    </select>
+
+    <button class="save" onclick="saveEvent()">
+      Save Reminder
+    </button>
+
+    <button class="cancel" onclick="closeModal()">
+      Cancel
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const YEAR = 2027;
+
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+];
+
+
+/*
+  TEST TODAY
+
+  Forced to January 1, 2027
+*/
+
+const todayYear = 2027;
+const todayMonth = 0;
+const todayDate = 1;
+
+
+let currentMonth = 0;
+
+let selectedDate = "2027-01-01";
+
+
+/* LOAD SAVED EVENTS */
+
+let events =
+  JSON.parse(localStorage.getItem("calendar2027Events")) || [];
+
+
+/* SHOW CALENDAR */
+
+function showCalendar() {
+
+  const daysBox =
+    document.getElementById("days");
+
+  daysBox.innerHTML = "";
+
+  document.getElementById("monthTitle").innerText =
+    months[currentMonth] + " " + YEAR;
+
+
+  const firstDay =
+    new Date(YEAR, currentMonth, 1).getDay();
+
+
+  const daysInMonth =
+    new Date(
+      YEAR,
+      currentMonth + 1,
+      0
+    ).getDate();
+
+
+  /* EMPTY DAYS */
+
+  for (let i = 0; i < firstDay; i++) {
+
+    const empty =
+      document.createElement("div");
+
+    daysBox.appendChild(empty);
+
+  }
+
+
+  /* DATES */
+
+  for (
+    let d = 1;
+    d <= daysInMonth;
+    d++
+  ) {
+
+    const day =
+      document.createElement("div");
+
+    day.className = "day";
+
+
+    const number =
+      document.createElement("div");
+
+    number.className = "day-number";
+
+    number.innerText = d;
+
+
+    day.appendChild(number);
+
+
+    /*
+      TODAY CIRCLE
+    */
+
+    if (
+      YEAR === todayYear &&
+      currentMonth === todayMonth &&
+      d === todayDate
+    ) {
+
+      day.classList.add("today");
+
+    }
+
+
+    const dateString =
+      YEAR +
+      "-" +
+      String(currentMonth + 1).padStart(2, "0") +
+      "-" +
+      String(d).padStart(2, "0");
+
+
+    /*
+      SHOW EVENTS
+    */
+
+    events
+      .filter(e => e.date === dateString)
+      .forEach(e => {
+
+        const event =
+          document.createElement("div");
+
+        event.className =
+          "event-dot " + e.type;
+
+        event.innerText =
+          e.name;
+
+        day.appendChild(event);
+
+      });
+
+
+    /*
+      CLICK DATE
+    */
+
+    day.onclick = function() {
+
+      selectedDate = dateString;
+
+      showEvents();
+
+    };
+
+
+    daysBox.appendChild(day);
+
+  }
+
+}
+
+
+/* SHOW EVENTS FOR SELECTED DATE */
+
+function showEvents() {
+
+  const date =
+    new Date(selectedDate + "T00:00:00");
+
+
+  document.getElementById("selectedTitle")
+    .innerText =
+    date.toLocaleDateString(
+      "en-US",
+      {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      }
+    );
+
+
+  const list =
+    document.getElementById("eventList");
+
+
+  const dayEvents =
+    events.filter(
+      e => e.date === selectedDate
+    );
+
+
+  if (dayEvents.length === 0) {
+
+    list.innerHTML =
+      "No events yet.";
+
+    return;
+
+  }
+
+
+  list.innerHTML = "";
+
+
+  dayEvents.forEach((e, index) => {
+
+    const item =
+      document.createElement("div");
+
+    item.className =
+      "event-item";
+
+
+    item.innerHTML = `
+
+      <div class="event-info">
+
+        <strong>
+          ${e.name}
+        </strong>
+
+        <span class="event-type">
+          ${getTypeName(e.type)}
+        </span>
+
+      </div>
+
+      <button
+        class="delete"
+        onclick="deleteEvent(${index})"
+      >
+        ×
+      </button>
+
+    `;
+
+
+    list.appendChild(item);
+
+  });
+
+}
+
+
+/* EVENT TYPE NAME */
+
+function getTypeName(type) {
+
+  if (type === "birthday")
+    return "🎂 Birthday";
+
+  if (type === "meeting")
+    return "📅 Meeting";
+
+  if (type === "task")
+    return "📝 Task";
+
+  return "🎉 Event";
+
+}
+
+
+/* OPEN ADD WINDOW */
+
+function openModal() {
+
+  document.getElementById("modal")
+    .style.display = "flex";
+
+}
+
+
+/* CLOSE ADD WINDOW */
+
+function closeModal() {
+
+  document.getElementById("modal")
+    .style.display = "none";
+
+}
+
+
+/* SAVE EVENT */
+
+function saveEvent() {
+
+  const name =
+    document.getElementById("eventName")
+      .value.trim();
+
+  const date =
+    document.getElementById("eventDate")
+      .value;
+
+  const type =
+    document.getElementById("eventType")
+      .value;
+
+
+  if (!name) {
+
+    alert("Please enter a reminder name.");
+
+    return;
+
+  }
+
+
+  if (!date) {
+
+    alert("Please select a date.");
+
+    return;
+
+  }
+
+
+  events.push({
+
+    name: name,
+    date: date,
+    type: type
+
+  });
+
+
+  localStorage.setItem(
+    "calendar2027Events",
+    JSON.stringify(events)
+  );
+
+
+  selectedDate = date;
+
+
+  const selected =
+    new Date(date + "T00:00:00");
+
+
+  currentMonth =
+    selected.getMonth();
+
+
+  showCalendar();
+
+  showEvents();
+
+  closeModal();
+
+
+  document.getElementById("eventName")
+    .value = "";
+
+}
+
+
+/* DELETE EVENT */
+
+function deleteEvent(index) {
+
+  const dayEvents =
+    events.filter(
+      e => e.date === selectedDate
+    );
+
+
+  const eventToDelete =
+    dayEvents[index];
+
+
+  const realIndex =
+    events.indexOf(eventToDelete);
+
+
+  events.splice(realIndex, 1);
+
+
+  localStorage.setItem(
+    "calendar2027Events",
+    JSON.stringify(events)
+  );
+
+
+  showCalendar();
+
+  showEvents();
+
+}
+
+
+/* PREVIOUS MONTH */
+
+function previousMonth() {
+
+  if (currentMonth > 0) {
+
+    currentMonth--;
+
+    showCalendar();
+
+  }
+
+}
+
+
+/* NEXT MONTH */
+
+function nextMonth() {
+
+  if (currentMonth < 11) {
+
+    currentMonth++;
+
+    showCalendar();
+
+  }
+
+}
+
+
+/* GO TO JANUARY 1, 2027 */
+
+function goToday() {
+
+  currentMonth = todayMonth;
+
+  selectedDate = "2027-01-01";
+
+  showCalendar();
+
+  showEvents();
+
+}
+
+
+/* START */
+
+showCalendar();
+
+showEvents();
+
+</script>
+
+</body>
+</html>
