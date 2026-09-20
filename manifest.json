@@ -1,0 +1,10 @@
+{
+  "name": "Calendar 2027",
+  "short_name": "Calendar 2027",
+  "description": "A simple calendar for birthdays, meetings, tasks and events.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#222222",
+  "orientation": "portrait"
+}
