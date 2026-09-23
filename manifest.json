@@ -23,36 +23,19 @@
   ],
   "icons": [
     {
-      "src": "./icon-192.png",
-      "sizes": "192x192",
+      "src": "./file_0000000019d881f6b35aa91673c668fe.png",
+      "sizes": "any",
       "type": "image/png"
     },
     {
-      "src": "./icon-512.png",
-      "sizes": "512x512",
+      "src": "./file_0000000058888207b229b6cf28dff605.png",
+      "sizes": "any",
       "type": "image/png"
     },
     {
-      "src": "./icon-512-maskable.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "./screenshots/calendar-mobile.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Calendar 2027 on mobile"
-    },
-    {
-      "src": "./screenshots/calendar-desktop.png",
-      "sizes": "1366x768",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Calendar 2027 on desktop"
+      "src": "./file_00000000a5dc81f6ab5228b3021f7bfa.png",
+      "sizes": "any",
+      "type": "image/png"
     }
   ],
   "prefer_related_applications": false
